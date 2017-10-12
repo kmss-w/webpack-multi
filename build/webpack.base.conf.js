@@ -12,43 +12,62 @@
 const fs = require('fs');
 const path = require('path');
 
+var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
+
+const resolve = dir => {
+  return path.join(__dirname, '..', dir)
+};
+
 const entries = () => {
-  const src = __dirname + 'www/js';
+  const src = resolve('www/js');
 
-  let enties = {};
+  let stats = fs.statSync(src);
 
-  fs.stat(src, (err, stats) => {
-    if (err) {
-      console.log(`project path error: ${err}`);
-      return;
-    }
+  if (stats) {
+    let files = fs.readdirSync(src);
+    let enties = {};
 
-    fs.readdir(src, (err, files) => {
-      if (err) {
-        console.log(`project path entry file error: ${err}`);
-        return;
+    files.forEach(file => {
+      if (file.indexOf('.js') > 0 && file.indexOf('_') != 0) {
+        enties[file.split('.js')[0]] = [hotMiddlewareScript].concat(
+          `${src}\\${file}`
+        );
       }
-
-      files.forEach(file => {
-        if (file.indexOf('.js') > 0 && file.indexOf('_') != 0) {
-          enties[item.split('.js')[0]] = ['./build/dev-client'].concat(
-            './src/main.js'
-          );
-        }
-      });
     });
-  });
 
-  return enties;
+    return enties;
+  }
 };
 
 module.exports = {
   context: __dirname,
   entry: entries(),
   output: {
-    path: 'public',
+    path: resolve('public'),
     filename: 'javascript/[name].js',
-    publicPath: ''
+    publicPath: '/public',
   },
+  resolve: {
+    extensions: ['.js', '.json'],
+    alias: {}
+  },
+  module: {
+    rules: [
+      // {
+      //   test: /\.(js|vue)$/,
+      //   loader: 'eslint-loader',
+      //   enforce: 'pre',
+      //   include: [resolve('www')],
+      //   options: {
+      //     formatter: require('eslint-friendly-formatter')
+      //   }
+      // },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [resolve('www')]
+      }
+    ]
+  }
 };
  

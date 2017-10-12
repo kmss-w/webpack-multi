@@ -13,6 +13,7 @@ const PassThrough = require('stream').PassThrough;
 const hotMiddleware = require('webpack-hot-middleware');
 
 module.exports = (compiler, opts) => {
+  opts.path = opts.path || '/__webpack_hmr';
   const middleware = hotMiddleware(compiler, opts);
 
   return async (ctx, next) => {
@@ -23,9 +24,9 @@ module.exports = (compiler, opts) => {
       {
         write: stream.write.bind(stream),
         writeHead: (status, headers) => {
-          context.body = stream;
+          ctx.body = stream;
           ctx.status = status;
-          context.set(headers);
+          ctx.set(headers);
         }
       },
       next
