@@ -1,11 +1,13 @@
 {
   "name": "www.cos",
   "version": "0.1.0",
+  "description": "A private project",
+  "author": "wx <wx.atwork@gmail.com>",
   "private": true,
   "scripts": {
-    "start": "node bin/www",
-    "dev": "./node_modules/.bin/nodemon bin/www",
-    "dev_chrome": "./node_modules/.bin/nodemon --inspect bin/www",
+    "start": "node build/dev-server.js && node bin/www",
+    "dev": "node build/dev-server.js && ./node_modules/.bin/nodemon bin/www",
+    "build": "node build/dev-server.js",
     "prd": "pm2 start bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,6 +25,26 @@
     "koa-views": "^6.1.1"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0"
-  }
+    "chalk": "^2.1.0",
+    "eventsource-polyfill": "^0.9.6",
+    "http-proxy-middleware": "^0.17.4",
+    "nodemon": "^1.11.0",
+    "opn": "^5.1.0",
+    "portfinder": "^1.0.13",
+    "semver": "^5.4.1",
+    "shelljs": "^0.7.8",
+    "webpack": "^3.7.1",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-hot-middleware": "^2.19.1",
+    "webpack-merge": "^4.1.0"
+  },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
