@@ -14,6 +14,9 @@ var path = require('path');
 module.exports = {
   build: {
     env: require('./prod.env'),
+    assetsRoot: path.resolve(__dirname, 'public'),
+    assetsPublicPath: '/',
+    assetsSubDirectory: 'static',
     // Run the build command with an extra argument to
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
@@ -22,11 +25,11 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8080,
+    port: process.env.PORT || 8080,
     autoOpenBrowser: true,
     proxyTable: {},
-    assetsPublicPath: '/',
-    assetsSubDirectory: 'static',
+    assetsPublicPath: '',
+    assetsSubDirectory: 'www/static',
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

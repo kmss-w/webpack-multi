@@ -23,6 +23,8 @@ const webpackConfig = (node_env === 'testing' || node_env === 'production') ?
   require('./webpack.prod.conf') :
   require('./webpack.dev.conf');
 
+
+
 const opn = require('opn');
 const path = require('path');
 const webpack = require('webpack');
@@ -33,11 +35,14 @@ const compiler = webpack(webpackConfig);
 
 const devMiddleware = require('./koa-webpack/koa-webpack-dev')(compiler, {
   publicPath: webpackConfig.output.publicPath,
-  quiet: true
+  quiet: true,
+  serverSideRender: true
 });
 
 const hotMiddleware = require('./koa-webpack/koa-webpack-hot')(compiler, {
-  log: false,
+  log: (msg) => {
+    console.log(msg);
+  },
   heartbeat: 2000
 });
 
@@ -66,7 +71,7 @@ app.use(devMiddleware.webpackDevMidd());
 const staticPath = path.posix.join(
   config.dev.assetsPublicPath, config.dev.assetsSubDirectory
 );
-app.use(require('koa-static')(__dirname + staticPath));
+app.use(require('koa-static')(staticPath));
 
 
 // for ready

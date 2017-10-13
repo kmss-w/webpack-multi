@@ -12,6 +12,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const config = require('./config');
+
 var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 const resolve = dir => {
@@ -44,8 +46,10 @@ module.exports = {
   entry: entries(),
   output: {
     path: resolve('public'),
-    filename: 'javascript/[name].js',
-    publicPath: '/public',
+    filename: 'js/[name].js',
+    publicPath: process.env.NODE_ENV === 'production' ?
+      config.build.assetsPublicPath :
+      config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.json'],
@@ -53,20 +57,20 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.(js|vue)$/,
-      //   loader: 'eslint-loader',
-      //   enforce: 'pre',
-      //   include: [resolve('www')],
-      //   options: {
-      //     formatter: require('eslint-friendly-formatter')
-      //   }
-      // },
+      {
+        test: /\.(js)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: [resolve('www')],
+        options: {
+          formatter: require('eslint-friendly-formatter')
+        }
+      },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('www')]
-      }
+      },
     ]
   }
 };

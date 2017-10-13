@@ -11,6 +11,7 @@
 
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
 const config = require('./config');
@@ -22,9 +23,9 @@ module.exports = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': config.dev.env
     }),
-    new webpack.NoEmitOnErrorsPlugin(),
+    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
-    // https://github.com/ampedandwired/html-webpack-plugin
+    new webpack.NoEmitOnErrorsPlugin(),
     new FriendlyErrorsPlugin()
   ]
 });
