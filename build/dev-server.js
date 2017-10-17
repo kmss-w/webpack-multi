@@ -23,8 +23,6 @@ const webpackConfig = (node_env === 'testing' || node_env === 'production') ?
   require('./webpack.prod.conf') :
   require('./webpack.dev.conf');
 
-
-
 const opn = require('opn');
 const path = require('path');
 const webpack = require('webpack');
@@ -35,8 +33,7 @@ const compiler = webpack(webpackConfig);
 
 const devMiddleware = require('./koa-webpack/koa-webpack-dev')(compiler, {
   publicPath: webpackConfig.output.publicPath,
-  quiet: true,
-  serverSideRender: true
+  quiet: true
 });
 
 const hotMiddleware = require('./koa-webpack/koa-webpack-hot')(compiler, {
