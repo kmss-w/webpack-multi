@@ -39,9 +39,9 @@ module.exports = opts => {
     stream.pipe(sassVariables({$env: node_env}))
       .pipe(sourcemaps.init())
       .pipe(filterStyleFile())
-      .pipe(sass().on("error", error))
+      .pipe(sass().on('error', error))
       .pipe(autoprefixer({
-        browsers: ["last 2 versions", "Android >= 4.0"],
+        browsers: ['last 2 versions', 'Android >= 4.0'],
         cascade: true,
         remove: false
       }))
