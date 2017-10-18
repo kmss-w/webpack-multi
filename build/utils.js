@@ -12,6 +12,21 @@
 const path = require('path')
 const config = require('./config');
 
+exports.resolve = dir => {
+  return path.join(__dirname, '..', dir);
+};
+
+// convert path to path object(contains more file and path information)
+exports.parsePath = _path => {
+  var ext = path.extname(_path);
+
+  return {
+    dirname: path.dirname(_path),
+    basename: path.basename(_path, ext),
+    extname: ext
+  };
+};
+
 exports.assetsPath = function (_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production' ?
     config.build.assetsSubDirectory :

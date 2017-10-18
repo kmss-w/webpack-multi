@@ -21,6 +21,11 @@ app.use(logger());
 
 app.use(require('koa-static')(__dirname + '/public'));
 
+if (app.env === 'development') {
+  // enable browsersync
+  app.use(require('./build/koa-modules/koa-browser-sync')());
+}
+
 app.use(views(__dirname + '/views', {
   map: {html: 'ejs'},
   extension: 'html'

@@ -10,19 +10,14 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
 
 const utils = require('./utils');
 const config = require('./config');
 
 var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
-const resolve = dir => {
-  return path.join(__dirname, '..', dir)
-};
-
 const entries = () => {
-  const src = resolve('www/js');
+  const src = utils.resolve('www/js');
 
   let stats = fs.statSync(src);
 
@@ -46,7 +41,7 @@ module.exports = {
   context: __dirname,
   entry: entries(),
   output: {
-    path: resolve('public'),
+    path: utils.resolve('public'),
     filename: 'js/[name].js',
     publicPath: process.env.NODE_ENV === 'production' ?
       config.build.assetsPublicPath :
@@ -62,7 +57,7 @@ module.exports = {
         test: /\.(js)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('www')],
+        include: [utils.resolve('www')],
         options: {
           formatter: require('eslint-friendly-formatter')
         }
@@ -70,7 +65,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('www')]
+        include: [utils.resolve('www')]
       },
       {
         test: /\.json$/,

@@ -11,6 +11,7 @@
 
 require('./check-versions')();
 
+const utils = require('./utils');
 const config = require('./config');
 
 if (!process.env.NODE_ENV) {
@@ -31,12 +32,12 @@ const proxyMiddleware = require('http-proxy-middleware');
 const app = require('../app');
 const compiler = webpack(webpackConfig);
 
-const devMiddleware = require('./koa-webpack/koa-webpack-dev')(compiler, {
+const devMiddleware = require('./koa-modules/koa-webpack-dev')(compiler, {
   publicPath: webpackConfig.output.publicPath,
   quiet: true
 });
 
-const hotMiddleware = require('./koa-webpack/koa-webpack-hot')(compiler, {
+const hotMiddleware = require('./koa-modules/koa-webpack-hot')(compiler, {
   log: (msg) => {
     console.log(msg);
   },
@@ -65,10 +66,19 @@ Object.keys(proxyTable).forEach(function (context) {
 app.use(devMiddleware.webpackDevMidd());
 
 // serve pure static assets
-const staticPath = path.posix.join(
-  config.dev.assetsPublicPath, config.dev.assetsSubDirectory
-);
-app.use(require('koa-static')(staticPath));
+// const staticPath = path.posix.join(
+//   config.dev.assetsPublicPath, config.dev.assetsSubDirectory
+// );
+// app.use(require('koa-static')(staticPath));
+
+
+// start gulp task
+require('./gulp')({
+  dev: node_env,
+  root: utils.resolve('/'),
+  src: 'www',
+  dest: 'public'
+});
 
 
 // for ready
