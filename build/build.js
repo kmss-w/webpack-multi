@@ -46,16 +46,7 @@ const rmViews = () => new Promise((resolve, reject) => {
   });
 });
 
-const runGulp = () =>  new Promise((resolve, reject) => {
-  require('./gulp')({
-    dev: process.env.NODE_ENV,
-    root: utils.resolve('/'),
-    src: 'www',
-    dest: 'public'
-  });
-});
-
-rmPublic().then(rmViews).then(runGulp).then(() => {
+rmPublic().then(rmViews).then(() => {
   webpack(webpackConfig, (err, stats) => {
     spinner.stop();
 
@@ -76,10 +67,17 @@ rmPublic().then(rmViews).then(runGulp).then(() => {
       process.exit(1);
     }
 
-    console.log(chalk.cyan('  Build complete.\n'));
-    console.log(chalk.yellow(
-      '  Tip: built files are meant to be served over an HTTP server.\n'
-    ));
+    require('./gulp')({
+      dev: process.env.NODE_ENV,
+      root: utils.resolve('/'),
+      src: 'www',
+      dest: 'public'
+    }, () => {
+      console.log(chalk.cyan('  Build complete.\n'));
+      console.log(chalk.yellow(
+        '  Tip: built files are meant to be served over an HTTP server.\n'
+      ));
+    });
   });
 });
  

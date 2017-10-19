@@ -79,15 +79,15 @@ module.exports = opts => {
         .pipe(cssBase64({
           baseDir: '../img/base64',
           maxWeightResource: 1024 * 1000,
-          extensionsAllowed: [".png", ".jpg", "gif", "jpeg", "svg"]
+          extensionsAllowed: ['.png', '.jpg', 'gif', 'jpeg', 'svg']
         }))
         .pipe(autoprefixer({
-          browsers: ["last 2 versions", "Android >= 4.0"],
+          browsers: ['last 2 versions', 'Android >= 4.0'],
           cascade: true,
           remove: false
         }))
         .pipe(cleanCSS({
-          compatibility: "ie8"
+          compatibility: 'ie8'
         }))
         .pipe(header(options.banner || ''))
         .pipe(gulp.dest(dest))

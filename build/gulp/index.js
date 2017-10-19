@@ -27,20 +27,23 @@ const startBrowserSync = options => {
 };
 
 // start gulp
-module.exports = opts => {
+// TODO: <cb> function call timing is not accurate. Not complete the call.
+module.exports = (opts, cb) => {
   opts = Object.assign({
-    env: '',
-    root: '',
-    src: '',
-    dest: '',
-    banner: '',
-    reload: reload,
+    env: '', // build environment
+    root: '', // root path
+    src: '', // source code path name (relative path)
+    dest: '', // build path name (relative path)
+    banner: '', // code banner information
+    cssUnit: 'px', // px or rem (sprite image size unit)
+    webp: true, // convert image to webp
+    reload: reload, // browser reload instance (internal use)
     browserSync: {
       ui: false,
       notify: false,
       ghostMode: false,
       timestamps: true
-    }
+    } // browsersync config information
   }, opts);
 
   // start all task
@@ -52,6 +55,7 @@ module.exports = opts => {
   }
   else {
     html(opts);
+    cb && cb();
   }
 };
 
