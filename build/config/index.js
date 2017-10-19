@@ -13,10 +13,11 @@ var path = require('path');
 
 module.exports = {
   build: {
-    env: require('./prod.env'),
-    assetsRoot: path.resolve(__dirname, 'public'),
-    assetsPublicPath: '/',
-    assetsSubDirectory: 'static',
+    env: require('./prod.env'),//
+    assetsRoot: path.join(__dirname, '../../'),
+    assetsPublicPath: 'public',//
+    assetsSubDirectory: 'public/static',
+    productionSourceMap: false,
     // Run the build command with an extra argument to
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
@@ -24,9 +25,9 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report
   },
   dev: {
-    env: require('./dev.env'),
-    port: process.env.PORT || 8080,
-    autoOpenBrowser: true,
+    env: require('./dev.env'),//
+    port: process.env.PORT || 8080,//
+    autoOpenBrowser: true,//
     proxyTable: {},
     assetsPublicPath: '/',
     assetsSubDirectory: 'public',

@@ -11,7 +11,9 @@
 
 const through = require('through2');
 
-module.exports = option => {
+module.exports = options => {
+  options = Object.assign({}, options);
+
   return through.obj((file, enc, cb) => {
     if (file.isBuffer()) {
       let name = file.path.replace(/\\/g, '/').split('/').pop();

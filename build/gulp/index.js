@@ -10,7 +10,7 @@
 'use strict';
 
 const sass = require('./gulp.sass');
-const ejs = require('./gulp.ejs');
+const html = require('./gulp.html');
 
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
@@ -29,10 +29,11 @@ const startBrowserSync = options => {
 // start gulp
 module.exports = opts => {
   opts = Object.assign({
-    dev: '',
+    env: '',
     root: '',
     src: '',
     dest: '',
+    banner: '',
     reload: reload,
     browserSync: {
       ui: false,
@@ -42,9 +43,15 @@ module.exports = opts => {
     }
   }, opts);
 
-  sass(opts);
-  ejs(opts);
+  // start all task
+  if (opts.env === 'development') {
+    sass(opts);
+    html(opts);
 
-  startBrowserSync(opts.browserSync);
+    startBrowserSync(opts.browserSync);
+  }
+  else {
+    html(opts);
+  }
 };
 

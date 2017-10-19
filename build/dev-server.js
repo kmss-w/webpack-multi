@@ -74,7 +74,7 @@ app.use(devMiddleware.webpackDevMidd());
 
 // start gulp task
 require('./gulp')({
-  dev: node_env,
+  env: node_env,
   root: utils.resolve('/'),
   src: 'www',
   dest: 'public'

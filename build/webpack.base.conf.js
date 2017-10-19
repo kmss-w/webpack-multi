@@ -14,7 +14,6 @@ const fs = require('fs');
 const utils = require('./utils');
 const config = require('./config');
 
-var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 const entries = () => {
   const src = utils.resolve('www/js');
@@ -27,9 +26,7 @@ const entries = () => {
 
     files.forEach(file => {
       if (file.indexOf('.js') > 0 && file.indexOf('_') != 0) {
-        enties[file.split('.js')[0]] = [hotMiddlewareScript].concat(
-          `${src}\\${file}`
-        );
+        enties[file.split('.js')[0]] = `${src}\\${file}`;
       }
     });
 
@@ -71,26 +68,26 @@ module.exports = {
         test: /\.json$/,
         loader: 'json-loader'
       },
-      {
-        test: /\.scss$/,
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {loader: 'sass-loader'}
-        ]
-      },
-      {
-        test: /\.less/,
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {loader: 'less-loader'}
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      },
+      // {
+      //   test: /\.scss$/,
+      //   use: [
+      //     {loader: 'style-loader'},
+      //     {loader: 'css-loader'},
+      //     {loader: 'sass-loader'}
+      //   ]
+      // },
+      // {
+      //   test: /\.less/,
+      //   use: [
+      //     {loader: 'style-loader'},
+      //     {loader: 'css-loader'},
+      //     {loader: 'less-loader'}
+      //   ]
+      // },
+      // {
+      //   test: /\.css$/,
+      //   use: ['style-loader', 'css-loader']
+      // },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
