@@ -16,7 +16,7 @@ module.exports = {
     env: require('./prod.env'),//
     assetsRoot: path.join(__dirname, '../../'),
     assetsPublicPath: 'public',//
-    assetsSubDirectory: 'public/static',
+    assetsSubDirectory: 'public/lib',
     productionSourceMap: false,
     // Run the build command with an extra argument to
     // View the bundle analyzer report after build finishes:

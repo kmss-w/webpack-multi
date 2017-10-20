@@ -24,9 +24,15 @@ module.exports = options => {
 
   let stream = gulp.src(src);
 
-  if (opts.env === 'development') {
+  if (options.env === 'development') {
+    const task = () => {
+      stream.pipe(gulp.dest(dest));
+    };
+
     // watch
-    return;
+    gulp.watch(src, task);
+
+    return task();
   }
 
   stream.pipe(gulp.dest(dest)).on('end', () => {

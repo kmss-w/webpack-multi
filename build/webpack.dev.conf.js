@@ -29,9 +29,31 @@ Object.keys(baseWebpackConfig.entry).forEach(function (name) {
 });
 
 module.exports = merge(baseWebpackConfig, {
-  // module: {
-  //   rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
-  // },
+  module: {
+    // rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          {loader: 'style-loader'},
+          {loader: 'css-loader'},
+          {loader: 'sass-loader'}
+        ]
+      },
+      {
+        test: /\.less/,
+        use: [
+          {loader: 'style-loader'},
+          {loader: 'css-loader'},
+          {loader: 'less-loader'}
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
+  },
   devtool: '#cheap-module-eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
@@ -42,7 +64,7 @@ module.exports = merge(baseWebpackConfig, {
     // copy custom static assets
     new CopyWebpackPlugin([
       {
-        from: path.join(config.build.assetsRoot, '/www/static'),
+        from: path.join(config.build.assetsRoot, '/www/lib'),
         to: path.join(config.build.assetsRoot, config.build.assetsSubDirectory),
         ignore: ['.*']
       }

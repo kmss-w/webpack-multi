@@ -24,8 +24,6 @@ const webpackConfig = (node_env === 'testing' || node_env === 'production') ?
   require('./webpack.prod.conf') :
   require('./webpack.dev.conf');
 
-const opn = require('opn');
-const path = require('path');
 const webpack = require('webpack');
 const proxyMiddleware = require('http-proxy-middleware');
 
@@ -73,7 +71,7 @@ app.use(devMiddleware.webpackDevMidd());
 
 
 // start gulp task
-require('./gulp')({
+const reload = require('./gulp')({
   env: node_env,
   root: utils.resolve('/'),
   src: 'www',
@@ -93,12 +91,11 @@ var readyPromise = new Promise((resolve, reject) => {
 const portfinder = require('portfinder');
 portfinder.basePort = process.env.PORT || config.dev.port;
 
-// automatically open browser, if not set will be false
-const autoOpenBrowser = !!config.dev.autoOpenBrowser;
 
 let server;
 
 console.log('> Starting dev server...');
+
 devMiddleware.dev.waitUntilValid(() => {
   portfinder.getPort((err, port) => {
     if (err) {
@@ -109,12 +106,10 @@ devMiddleware.dev.waitUntilValid(() => {
     let uri = 'http://localhost:' + port;
     console.log('> Listening at ' + uri + '\n');
 
-    // when env is testing, don't need open it
-    if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
-      opn(uri);
-    }
+    server = app.listen(port, () => {
+      reload();
+    });
 
-    server = app.listen(port);
     _resolve();
   });
 });

@@ -13,40 +13,18 @@ require('./check-versions')();
 
 process.env.NODE_ENV = 'production';
 
-const path = require('path');
+
 const ora = require('ora');
-const rm = require('rimraf');
 const chalk = require('chalk');
 const webpack = require('webpack');
 
 const utils = require('./utils');
-const config = require('./config');
 const webpackConfig = require('./webpack.prod.conf');
 
 const spinner = ora('building for production...');
 spinner.start();
 
-const rmPublic = () => new Promise((resolve, reject) => {
-  rm(path.join(config.build.assetsRoot, config.build.assetsPublicPath, '*'), err => {
-    if (err) {
-      throw err;
-    }
-
-    resolve();
-  });
-});
-
-const rmViews = () => new Promise((resolve, reject) => {
-  rm(path.join(config.build.assetsRoot, 'views/*'), err => {
-    if (err) {
-      throw err;
-    }
-
-    resolve();
-  });
-});
-
-rmPublic().then(rmViews).then(() => {
+require('./clean')().then(() => {
   webpack(webpackConfig, (err, stats) => {
     spinner.stop();
 

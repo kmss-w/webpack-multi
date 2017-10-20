@@ -11,6 +11,8 @@
 
 const sass = require('./gulp.sass');
 const html = require('./gulp.html');
+const image = require('./gulp.image');
+const asserts = require('./gulp.asserts');
 
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
@@ -37,6 +39,7 @@ module.exports = (opts, cb) => {
     banner: '', // code banner information
     cssUnit: 'px', // px or rem (sprite image size unit)
     webp: true, // convert image to webp
+    assets: '', // static path when build auto redirect to this path
     reload: reload, // browser reload instance (internal use)
     browserSync: {
       ui: false,
@@ -50,6 +53,8 @@ module.exports = (opts, cb) => {
   if (opts.env === 'development') {
     sass(opts);
     html(opts);
+    image(opts);
+    asserts(opts);
 
     startBrowserSync(opts.browserSync);
   }
@@ -57,5 +62,7 @@ module.exports = (opts, cb) => {
     html(opts);
     cb && cb();
   }
+
+  return reload;
 };
 
