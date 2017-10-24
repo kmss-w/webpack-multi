@@ -10,6 +10,7 @@
 'use strict';
 
 const fs = require('fs');
+const webpack = require('webpack');
 
 const utils = require('./utils');
 const config = require('./config');
@@ -46,10 +47,17 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.json'],
-    alias: {}
+    alias: {
+      jquery: utils.resolve('www/lib/jquery-3.2.1/jquery.js'),
+      Library: utils.resolve('www/lib/')
+    }
   },
   module: {
     rules: [
+      {
+        test: require.resolve('jquery'),
+        loader: 'expose-loader?$!expose-loader?jQuery'
+      },
       {
         test: /\.(js)$/,
         loader: 'eslint-loader',
@@ -93,6 +101,9 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  externals: {
+    jquery: 'window.$'
+  },
 };
  

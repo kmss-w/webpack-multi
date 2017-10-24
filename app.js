@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
-const render = require('koa-ejs');
+const views = require('koa-views');
+//const render = require('koa-ejs');
 const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser');
@@ -26,13 +27,17 @@ if (app.env === 'development') {
   app.use(require('./build/koa-modules/koa-browser-sync')());
 }
 
-render(app, {
-  root: __dirname + '/views',
-  layout: '_layout',
-  viewExt: 'html',
-  cache: app.env !== 'development',
-  debug: false
-});
+app.use(views(__dirname + '/views', {
+  map: {html: 'ejs'},
+  extension: 'html'
+}));
+// render(app, {
+//   root: __dirname + '/views',
+//   layout: '_layout',
+//   viewExt: 'html',
+//   cache: app.env !== 'development',
+//   debug: false
+// });
 
 // logger
 app.use(async (ctx, next) => {
