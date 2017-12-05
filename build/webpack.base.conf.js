@@ -1,6 +1,6 @@
 /*!
  * project name: www.cos
- * name:         webpack.base.conf.js.js
+ * name:         webpack.base.conf.js
  * version:      v0.0.1
  * author:       w.xuan
  * email:        pro.w.xuan@.gmail.com
@@ -9,72 +9,60 @@
 
 'use strict';
 
-const fs = require('fs');
-const webpack = require('webpack');
-
 const utils = require('./utils');
 const config = require('./config');
-
-
-const entries = () => {
-  const src = utils.resolve('www/js');
-
-  let stats = fs.statSync(src);
-
-  if (stats) {
-    let files = fs.readdirSync(src);
-    let enties = {};
-
-    files.forEach(file => {
-      if (file.indexOf('.js') > 0 && file.indexOf('_') != 0) {
-        enties[file.split('.js')[0]] = `${src}\\${file}`;
-      }
-    });
-
-    return enties;
-  }
-};
+const vueLoaderConfig = require('./vue-loader.conf');
 
 module.exports = {
-  context: __dirname,
-  entry: entries(),
+  entry: utils.entries(utils.resolve('src/scripts/entries'), '/**/*.js'),
   output: {
-    path: utils.resolve('public'),
+    path: config.build.assetsRoot,
     filename: 'js/[name].js',
     publicPath: process.env.NODE_ENV === 'production' ?
       config.build.assetsPublicPath :
       config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['.js', '.json'],
+    extensions: ['.tsx', '.ts', '.js', '.vue', '.json'],
     alias: {
-      jquery: utils.resolve('www/lib/jquery-3.2.1/jquery.js'),
-      Library: utils.resolve('www/lib/')
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': utils.resolve('src'),
     }
   },
   module: {
     rules: [
       {
-        test: require.resolve('jquery'),
-        loader: 'expose-loader?$!expose-loader?jQuery'
-      },
-      {
-        test: /\.(js)$/,
+        test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [utils.resolve('www')],
+        include: [utils.resolve('src'), utils.resolve('test')],
         options: {
           formatter: require('eslint-friendly-formatter')
         }
       },
       {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: [utils.resolve('www')]
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: vueLoaderConfig
       },
       {
-        test: /\.json$/,
-        loader: 'json-loader'
+        test: /\.(html)$/,
+        use: {
+          loader: 'html-loader',
+          options: {
+            attrs: [':data-src']
+          }
+        }
+      },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [utils.resolve('src'), utils.resolve('test')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -101,9 +89,5 @@ module.exports = {
         }
       }
     ]
-  },
-  externals: {
-    jquery: 'window.$'
-  },
+  }
 };
- 

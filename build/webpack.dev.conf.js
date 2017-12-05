@@ -12,64 +12,81 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const SpritesmithPlugin = require('webpack-spritesmith');
 
 const utils = require('./utils');
 const config = require('./config');
 const baseWebpackConfig = require('./webpack.base.conf');
 
-
-var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
-
 // add hot-reload related code to entry chunks
 Object.keys(baseWebpackConfig.entry).forEach(function (name) {
-  baseWebpackConfig.entry[name] = [hotMiddlewareScript].concat(baseWebpackConfig.entry[name])
+  baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
 });
 
-module.exports = merge(baseWebpackConfig, {
+let devConfig = merge(baseWebpackConfig, {
   module: {
-    // rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
-    rules: [
-      {
-        test: /\.scss$/,
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {loader: 'sass-loader'}
-        ]
-      },
-      {
-        test: /\.less/,
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {loader: 'less-loader'}
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
+    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
   },
+  // cheap-module-eval-source-map is faster for development
   devtool: '#cheap-module-eval-source-map',
+  resolve: {
+    modules: ['node_modules', 'src/styles']
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': config.dev.env
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.join(config.build.assetsRoot, '/www/lib'),
-        to: path.join(config.build.assetsRoot, config.build.assetsSubDirectory),
-        ignore: ['.*']
-      }
-    ]),
     new webpack.NoEmitOnErrorsPlugin(),
-    new FriendlyErrorsPlugin()
+    // https://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
+    }),
+    new FriendlyErrorsPlugin(),
+
+    new SpritesmithPlugin({
+      src: {
+        cwd: path.resolve(__dirname, '../src/assets/sprite'),
+        glob: '*.png'
+      },
+      target: {
+        image: path.resolve(__dirname, '../src/styles/sprite.png'),
+        css: path.resolve(__dirname, '../src/styles/_img.scss')
+      },
+      apiOptions: {
+        cssImageRef: '~sprite.png'
+      }
+    }),
+    new webpack.WatchIgnorePlugin([
+      path.resolve(__dirname, '../src/styles/sprite.png'),
+      path.resolve(__dirname, '../src/styles/_img.scss')
+    ])
   ]
 });
+
+let pagePath = utils.resolve('src/views');
+let pages = utils.pages(pagePath + '/**/*.html');
+
+for (let entryName in pages) {
+  let fileName = path.normalize(pages[entryName]['path']).replace(
+    path.normalize(pagePath), ''
+  );
+
+  let conf = {
+    //filename: entryName + '.html', // html file name
+    filename: './views' + fileName, // html file name
+    template: pages[entryName]['path'],
+    inject: true, // auto inject static files to html
+    chunks: ['vendor', 'manifest', pages[entryName]['chunk']]
+  };
+
+  // entry corresponds to the HTML file (configure multiple, corresponding to an entry through a page chunks)
+  devConfig.plugins.push(new HtmlWebpackPlugin(conf));
+}
+
+module.exports = devConfig;

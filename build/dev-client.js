@@ -7,6 +7,7 @@
  * date:         2017/10/12
  */
 
+/* eslint-disable */
 'use strict';
 
 require('eventsource-polyfill');
@@ -17,4 +18,3 @@ hotClient.subscribe(function (event) {
     window.location.reload();
   }
 });
- 

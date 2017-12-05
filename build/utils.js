@@ -9,10 +9,15 @@
 
 'use strict';
 
-const path = require('path')
+const path = require('path');
+const glob = require('glob');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const config = require('./config');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+exports.exec = cmd => {
+  return require('child_process').execSync(cmd).toString().trim();
+};
 
 exports.resolve = dir => {
   return path.join(__dirname, '..', dir);
@@ -29,10 +34,50 @@ exports.parsePath = _path => {
   };
 };
 
+// only find index.js(be careful not to nesting)
+exports.entries = (_path, pattern) => {
+  let entries = {};
+
+  glob.sync(path.join(_path, pattern)).forEach(entry => {
+    let base = exports.parsePath(entry);
+
+    // get entry name(get recent upper file directory name)
+    // let name = path.normalize(base.dirname).replace(path.normalize(_path), '');
+    //
+    // if (name !== '') {
+    //   entries[name] = entry;
+    // }
+    // else {
+    //   entries[base.basename] = entry;
+    // }
+
+    entries[base.basename] = entry;
+  });
+
+  return entries;
+};
+
+exports.pages = _path => {
+  let files = {};
+
+  //_path.replace('**', '**!(shared)');
+
+  glob.sync(_path).forEach(html => {
+    let base = exports.parsePath(html);
+
+    files[base.basename] = {};
+    files[base.basename]['chunk'] = base.basename;
+    files[base.basename]['path'] = html;
+  });
+
+  return files;
+};
+
 exports.assetsPath = function (_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production' ?
-    config.build.assetsPublicPath :
-    config.dev.assetsPublicPath;
+    config.build.assetsSubDirectory :
+    config.dev.assetsSubDirectory;
+
   return path.posix.join(assetsSubDirectory, _path);
 };
 
@@ -48,7 +93,7 @@ exports.cssLoaders = function (options) {
   };
 
   // generate loader string to be used with extract text plugin
-  function generateLoaders(loader, loaderOptions) {
+  function generateLoaders (loader, loaderOptions) {
     const loaders = [cssLoader];
 
     if (loader) {
@@ -64,14 +109,16 @@ exports.cssLoaders = function (options) {
     // (which is the case during production build)
     if (options.extract) {
       return ExtractTextPlugin.extract({
-        use: loaders
-      })
+        use: loaders,
+        fallback: 'vue-style-loader'
+      });
     }
     else {
-
+      return ['vue-style-loader'].concat(loaders);
     }
   }
 
+  // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {
     css: generateLoaders(),
     postcss: generateLoaders(),
@@ -99,4 +146,3 @@ exports.styleLoaders = function (options) {
 
   return output;
 };
- 
